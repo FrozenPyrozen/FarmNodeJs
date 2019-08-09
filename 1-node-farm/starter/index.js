@@ -35,18 +35,69 @@ const url = require('url');
 ////////////////////////////////////////////////////////////////////
 // SERVER
 
+const replaceTemplate = (template, product) => {
+  const {
+    id,
+    productName,
+    image,
+    from,
+    nutrients,
+    quantity,
+    price,
+    organic,
+    description,
+  } = product;
+  let output = template.replace(/{%PRODUCTNAME%}/g, productName);
+  output = output.replace(/{%IMAGE%}/g, image);
+  output = output.replace(/{%QUANTITY%}/g, quantity);
+  output = output.replace(/{%PRICE%}/g, price);
+  output = output.replace(/{%ID%}/g, id);
+  output = output.replace(/{%NUTRIENTS%}/g, nutrients);
+  output = output.replace(/{%DESCRIPTION%}/g, description);
+  output = output.replace(/{%FROM%}/g, from);
+
+  if (!organic) output = output.replace(/{%NOT_ORGANIC%}/g, 'not-organic');
+
+  return output;
+};
+
 const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, 'utf-8');
+const dataObj = JSON.parse(data);
+
+const tempOverview = fs.readFileSync(
+  `${__dirname}/templates/template-overview.html`,
+  'utf-8'
+);
+const tempProduct = fs.readFileSync(
+  `${__dirname}/templates/template-product.html`,
+  'utf-8'
+);
+const tempCard = fs.readFileSync(
+  `${__dirname}/templates/template-card.html`,
+  'utf-8'
+);
 
 const server = http.createServer((req, res) => {
   const pathName = req.url;
 
+  // Overview page
   if (pathName === '/' || pathName === '/overview') {
-    res.end('This is the overview!');
+    res.writeHead(200, { 'Content-type': 'text/html' });
+    const cardsHtml = dataObj.map(el => replaceTemplate(tempCard, el)).join('');
+    const output = tempOverview.replace('%PRODUCT_CARDS%', cardsHtml);
+
+    res.end(output);
+
+    // Product page
   } else if (pathName === '/product') {
     res.end('This is the product!');
+
+    // API
   } else if (pathName === '/api') {
-    res.writeHead(200, { 'Content-type': 'text/json' });
+    res.writeHead(200, { 'Content-type': 'application/json' });
     res.end(data);
+
+    // Not found
   } else {
     res.writeHead(404, { 'Content-type': 'text/html' });
     res.end('<h1>Page not found 404!</h1>');
@@ -57,4 +108,4 @@ server.listen(8000, '127.0.0.1', () => {
   console.log('Listening to requests on port 8000!');
 });
 
-// TO-DO: Start watch video 11
+// TO-DO: Start watch video 12
