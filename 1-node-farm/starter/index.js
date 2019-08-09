@@ -79,9 +79,9 @@ const tempCard = fs.readFileSync(
 
 const server = http.createServer((req, res) => {
   const pathName = req.url;
-
+  const { query, pathname } = url.parse(pathName, true);
   // Overview page
-  if (pathName === '/' || pathName === '/overview') {
+  if (pathname === '/' || pathname === '/overview') {
     res.writeHead(200, { 'Content-type': 'text/html' });
     const cardsHtml = dataObj.map(el => replaceTemplate(tempCard, el)).join('');
     const output = tempOverview.replace('%PRODUCT_CARDS%', cardsHtml);
@@ -89,11 +89,14 @@ const server = http.createServer((req, res) => {
     res.end(output);
 
     // Product page
-  } else if (pathName === '/product') {
-    res.end('This is the product!');
+  } else if (pathname === '/product') {
+    res.writeHead(200, { 'Content-type': 'text/html' });
+    const product = dataObj[query.id];
+    const output = replaceTemplate(tempProduct, product);
+    res.end(output);
 
     // API
-  } else if (pathName === '/api') {
+  } else if (pathname === '/api') {
     res.writeHead(200, { 'Content-type': 'application/json' });
     res.end(data);
 
@@ -108,4 +111,4 @@ server.listen(8000, '127.0.0.1', () => {
   console.log('Listening to requests on port 8000!');
 });
 
-// TO-DO: Start watch video 12
+// TO-DO: Start watch video 14
