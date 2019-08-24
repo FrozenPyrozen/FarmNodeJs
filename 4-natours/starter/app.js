@@ -24,7 +24,7 @@ const tours = JSON.parse(
 
 // 2) ROUTE HANDLERS
 
-const getTours = (req, res) => {
+const getAllTours = (req, res) => {
   res.status(200).json({
     status: 'success',
     results: tours.length,
@@ -51,7 +51,7 @@ const getTour = (req, res) => {
   });
 };
 
-const postTour = (req, res) => {
+const createTour = (req, res) => {
   const newId = tours[tours.length - 1].id + 1;
   const newTour = { id: newId, ...req.body };
 
@@ -71,7 +71,7 @@ const postTour = (req, res) => {
   );
 };
 
-const patchTour = (req, res) => {
+const updateTour = (req, res) => {
   const id = Number(req.params.id);
   const tour = tours.find(el => el.id === id);
 
@@ -101,18 +101,60 @@ const deleteTour = (req, res) => {
   });
 };
 
+const getAllUsers = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'This toute in not yet defined',
+  });
+};
+
+const getUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'This toute in not yet defined',
+  });
+};
+const createUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'This toute in not yet defined',
+  });
+};
+const updateUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'This toute in not yet defined',
+  });
+};
+const deleteUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'This toute in not yet defined',
+  });
+};
 // 3) ROUTES
 
 app
   .route('/api/v1/tours')
-  .get(getTours)
-  .post(postTour);
+  .get(getAllTours)
+  .post(createTour);
 
 app
   .route('/api/v1/tours/:id')
   .get(getTour)
-  .patch(patchTour)
+  .patch(updateTour)
   .delete(deleteTour);
+
+app
+  .route('/api/v1/users')
+  .get(getAllUsers)
+  .post(createUser);
+
+app
+  .route('/api/v1/users/:id')
+  .get(getUser)
+  .patch(updateUser)
+  .delete(deleteUser);
 
 // 4) START SERVER
 
