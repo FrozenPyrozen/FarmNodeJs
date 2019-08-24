@@ -87,12 +87,6 @@ const deleteTour = (req, res) => {
   });
 };
 
-// app.get('/api/v1/tours', getTours);
-// app.get('/api/v1/tours/:id', getTour);
-// app.post('/api/v1/tours', postTour);
-// app.patch('/api/v1/tours/:id', patchTour);
-// app.delete('/api/v1/tours/:id', deleteTour);
-
 app
   .route('/api/v1/tours')
   .get(getTours)
