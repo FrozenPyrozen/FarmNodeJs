@@ -11,9 +11,33 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
 
-app.post('/api/v1/tours', (req, res) => {
-  // console.log(req.body);
+const getTours = (req, res) => {
+  res.status(200).json({
+    status: 'success',
+    results: tours.length,
+    data: {
+      tours,
+    },
+  });
+};
 
+const getTour = (req, res) => {
+  const id = Number(req.params.id);
+  const tour = tours.find(el => el.id === id);
+
+  if (!tour) {
+    return res.status(404).json({ status: 'fail', message: 'Invalid id!' });
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      tour,
+    },
+  });
+};
+
+const postTour = (req, res) => {
   const newId = tours[tours.length - 1].id + 1;
   const newTour = { id: newId, ...req.body };
 
@@ -31,9 +55,9 @@ app.post('/api/v1/tours', (req, res) => {
       });
     }
   );
-});
+};
 
-app.patch('/api/v1/tours/:id', (req, res) => {
+const patchTour = (req, res) => {
   const id = Number(req.params.id);
   const tour = tours.find(el => el.id === id);
 
@@ -47,9 +71,9 @@ app.patch('/api/v1/tours/:id', (req, res) => {
       tour: '<Updated tour here...>',
     },
   });
-});
+};
 
-app.delete('/api/v1/tours/:id', (req, res) => {
+const deleteTour = (req, res) => {
   const id = Number(req.params.id);
   const tour = tours.find(el => el.id === id);
 
@@ -61,33 +85,24 @@ app.delete('/api/v1/tours/:id', (req, res) => {
     status: 'success',
     data: null,
   });
-});
+};
 
-app.get('/api/v1/tours', (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    results: tours.length,
-    data: {
-      tours,
-    },
-  });
-});
+// app.get('/api/v1/tours', getTours);
+// app.get('/api/v1/tours/:id', getTour);
+// app.post('/api/v1/tours', postTour);
+// app.patch('/api/v1/tours/:id', patchTour);
+// app.delete('/api/v1/tours/:id', deleteTour);
 
-app.get('/api/v1/tours/:id', (req, res) => {
-  const id = Number(req.params.id);
-  const tour = tours.find(el => el.id === id);
+app
+  .route('/api/v1/tours')
+  .get(getTours)
+  .post(postTour);
 
-  if (!tour) {
-    return res.status(404).json({ status: 'fail', message: 'Invalid id!' });
-  }
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour,
-    },
-  });
-});
+app
+  .route('/api/v1/tours/:id')
+  .get(getTour)
+  .patch(patchTour)
+  .delete(deleteTour);
 
 app.listen(port, () => {
   console.log(`App running on port ${port}`);
