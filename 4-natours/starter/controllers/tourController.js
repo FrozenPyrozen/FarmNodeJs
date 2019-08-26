@@ -82,5 +82,3 @@ exports.deleteTour = (req, res) => {
     data: null,
   });
 };
-
-// Watch video 20
