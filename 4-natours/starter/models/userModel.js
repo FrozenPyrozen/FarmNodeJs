@@ -45,6 +45,7 @@ const userSchema = new mongoose.Schema({
   passwordResetExpires: Date,
 });
 
+// Encrypt password before saving
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
 
@@ -53,6 +54,7 @@ userSchema.pre('save', async function(next) {
   next();
 });
 
+// Set timestamp passwordChangedAt
 userSchema.pre('save', function(next) {
   if (!this.isModified('password') || this.isNew) return next();
 
