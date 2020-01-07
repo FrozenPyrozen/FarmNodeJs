@@ -43,6 +43,11 @@ const userSchema = new mongoose.Schema({
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
+  active: {
+    type: Boolean,
+    default: true,
+    select: false,
+  },
 });
 
 // Encrypt password before saving
@@ -62,6 +67,12 @@ userSchema.pre('save', function(next) {
   next();
 });
 
+userSchema.pre(/^find/, function(next) {
+  // this points to the current query
+  this.find({ active: { $ne: false } });
+  next();
+});
+
 userSchema.methods.createPasswordResetToken = function() {
   const resetToken = crypto.randomBytes(32).toString('hex');
 
@@ -70,8 +81,6 @@ userSchema.methods.createPasswordResetToken = function() {
     .update(resetToken)
     .digest('hex');
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
-
-  console.log({ resetToken }, this.passwordResetToken);
 
   return resetToken;
 };
