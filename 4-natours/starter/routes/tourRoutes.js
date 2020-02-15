@@ -15,6 +15,7 @@ const { protect, restrictTo } = require('../controllers/authController');
 
 const router = express.Router();
 
+// redirect requests to reviewRouter
 router.use('/:tourId/reviews', reviewRouter);
 
 router.route('/top-5-cheap').get(aliasTopTours, getAllTours);
