@@ -4,21 +4,21 @@ const factory = require('./handlerFactory');
 
 exports.aliasTopTours = async (req, res, next) => {
   req.query.limit = '5';
-  req.query.sort = '-ratingAverage,price';
-  req.query.fields = 'name,price,ratingAverage,summary,difficulty';
+  req.query.sort = '-ratingsAverage,price';
+  req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
 
   next();
 };
 
 exports.getTourStats = catchAsync(async (req, res, next) => {
   const stats = await Tour.aggregate([
-    { $match: { ratingAverage: { $gte: 4.5 } } },
+    { $match: { ratingsAverage: { $gte: 4.5 } } },
     {
       $group: {
         _id: { $toUpper: '$difficulty' },
         numTours: { $sum: 1 },
         numRating: { $sum: '$ratingQuantity' },
-        avgRating: { $avg: '$ratingAverage' },
+        avgRating: { $avg: '$ratingsAverage' },
         avgPrice: { $avg: '$price' },
         minPrice: { $min: '$price' },
         maxPrice: { $max: '$price' },

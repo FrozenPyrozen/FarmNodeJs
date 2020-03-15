@@ -30,7 +30,7 @@ const tourSchema = new mongoose.Schema(
         message: 'Difficulty is either: easy, medium, difficult',
       },
     },
-    ratingAverage: {
+    ratingsAverage: {
       type: Number,
       default: 4.5,
       min: [1, 'Rating must be above 1.0'],
@@ -108,6 +108,10 @@ const tourSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
+
+// Add index of fields and order it to improve read perfomance
+tourSchema.index({ price: 1, ratingsAverage: -1 });
+tourSchema.index({ slug: 1 });
 
 // DOCUMENT MIDDLEWARE: runs before .save() and .create()
 tourSchema.pre('save', function(next) {
