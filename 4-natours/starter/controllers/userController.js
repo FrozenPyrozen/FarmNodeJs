@@ -70,11 +70,6 @@ exports.createUser = (req, res) => {
     message: 'This toute in not yet defined',
   });
 };
-exports.updateUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This toute in not yet defined',
-  });
-};
-
+// Do NOT update password with this
+exports.updateUser = factory.updateOne(User);
 exports.deleteUser = factory.deleteOne(User);
