@@ -35,7 +35,7 @@ router.patch('/updateMe', updateMe);
 router.delete('/deleteMe', deleteMe);
 
 // Restrict all routes only to admin after this middleware
-router.use(restrictTo(['admin']));
+router.use(restrictTo('admin'));
 router
   .route('/')
   .get(getAllUsers)
