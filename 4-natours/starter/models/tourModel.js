@@ -113,6 +113,8 @@ const tourSchema = new mongoose.Schema(
 // Add index of fields and order it to improve read perfomance
 tourSchema.index({ price: 1, ratingsAverage: -1 });
 tourSchema.index({ slug: 1 });
+// geo index 2dsphere
+tourSchema.index({ startLocation: '2dsphere' });
 
 // DOCUMENT MIDDLEWARE: runs before .save() and .create()
 tourSchema.pre('save', function(next) {
