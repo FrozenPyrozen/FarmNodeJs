@@ -89,6 +89,11 @@ exports.deleteTour = factory.deleteOne(Tour);
 exports.getToursWithin = catchAsync(async (req, res, next) => {
   const { distance, latlng, unit } = req.params;
   const [lat, lng] = latlng.split(',');
+
+  if (!unit) {
+    next(new AppError('Please provide unit in the format mi,km', 400));
+  }
+
   if (!lat || !lng) {
     next(
       new AppError(
@@ -109,6 +114,52 @@ exports.getToursWithin = catchAsync(async (req, res, next) => {
     results: tours.length,
     data: {
       data: tours,
+    },
+  });
+});
+
+exports.getDistances = catchAsync(async (req, res, next) => {
+  const { latlng, unit } = req.params;
+  const [lat, lng] = latlng.split(',');
+
+  if (!unit) {
+    next(new AppError('Please provide unit in the format mi,km', 400));
+  }
+
+  if (!lat || !lng) {
+    next(
+      new AppError(
+        'Please provide latitude and longtitude in the format lat,lng',
+        400
+      )
+    );
+  }
+
+  const multiplier = unit === 'mi' ? 0.000621371 : 0.001;
+
+  const distances = await Tour.aggregate([
+    {
+      $geoNear: {
+        near: {
+          type: 'Point',
+          coordinates: [Number(lng), Number(lat)],
+        },
+        distanceField: 'distance',
+        distanceMultiplier: multiplier,
+      },
+    },
+    {
+      $project: {
+        distance: 1,
+        name: 1,
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      data: distances,
     },
   });
 });
